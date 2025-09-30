@@ -50,4 +50,88 @@
   <!-- Substitua a URL abaixo pela sua imagem -->
   <img src="thanks.png" alt="Imagem da Página" />
 </body>
+  <script>
+  async function sendPurchaseEvent() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Coleta de parâmetros (com aliases em PT)
+    const email = params.get("email") || "";
+    const phone = params.get("phone") || "";
+    const cityRaw = params.get("city") || params.get("cidade") || "";
+    const stateRaw = params.get("state") || params.get("estado") || "";
+
+    // Normalização + hash dos PII
+    const hashedEmail = email ? await sha256(normalizePII(email)) : "";
+    const hashedPhone = phone ? await sha256(normalizePII(phone)) : "";
+    const hashedCity  = cityRaw ? await sha256(normalizePII(cityRaw)) : "";
+    const hashedState = stateRaw ? await sha256(normalizePII(stateRaw)) : "";
+
+    // fb cookies
+    const fbp = getCookie('_fbp');
+    const fbc = getCookie('_fbc');
+
+    // Monta o payload da CAPI
+    const body = {
+      data: [
+        {
+          event_name: "Purchase",
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: "website",
+          user_data: {
+            em: hashedEmail,            // email (SHA256)
+            ph: hashedPhone,            // phone (SHA256)
+            ct: hashedCity,             // city (SHA256)
+            st: hashedState,            // state/UF (SHA256)
+            client_ip_address: "{{auto}}",
+            client_user_agent: navigator.userAgent,
+            fbp: fbp || undefined,
+            fbc: fbc || undefined
+          },
+          // (Opcional) Se quiser ver cidade/estado nos relatórios/Debug,
+          // você pode mandar também em custom_data (sem hash).
+          custom_data: {
+            currency: "BRL",
+            value: 19.90,
+            city: cityRaw || undefined,
+            state: stateRaw || undefined
+          }
+        }
+      ]
+    };
+
+    fetch("https://graph.facebook.com/v17.0/SEU_PIXEL_ID/events?access_token=SEU_TOKEN_API", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+  }
+
+  // Remove acentos, espaços duplicados, põe em lowercase
+  function normalizePII(text) {
+    return text
+      .trim()
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+      .replace(/\s+/g, ' '); // colapsa espaços
+  }
+
+  async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+  }
+
+  // Executa quando a página carrega
+  sendPurchaseEvent();
+</script>
+
 </html>
