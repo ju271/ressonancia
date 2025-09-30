@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ressonância da Prosperidade – Ritual de 7 Dias</title>
+  <title>Ressonância da Prosperidade – 7 Dias</title>
   <meta name="description" content="Ritual de 7 dias com frequências e meditações para alinhar sua energia à abundância." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -25,6 +25,26 @@
     <a class="brand" href="#inicio" aria-label="Ressonância da Prosperidade">
       <img src="logo.png" alt="Ressonância da Prosperidade" class="brand-logo" />
     </a>
+    <!-- TikTok Pixel Code End -->
+  <script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '1470121757591522'); // SEU PIXEL CORRETO AQUI
+fbq('track', 'PageView');
+</script>
+
+<noscript>
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=773719858512638&ev=PageView&noscript=1"/>
+</noscript>
+<!-- End Meta Pixel Code -->
   </header>
 
   <main id="inicio">
@@ -603,28 +623,63 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   ttq.page();
 }(window, document, 'ttq');
 </script>
-<!-- TikTok Pixel Code End -->
-  <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
 
-fbq('init', '1470121757591522'); // SEU PIXEL CORRETO AQUI
-fbq('track', 'PageView');
+  <script>
+  async function sendPageViewEvent() {
+    const params = new URLSearchParams(window.location.search);
+
+    const email = params.get("email") || "";
+    const phone = params.get("phone") || "";
+
+    const hashedEmail = email ? await sha256(email) : "";
+    const hashedPhone = phone ? await sha256(phone) : "";
+
+    const fbp = getCookie('_fbp');
+    const fbc = getCookie('_fbc');
+
+    fetch("https://graph.facebook.com/v17.0/SEU_PIXEL_ID/events?access_token=SEU_TOKEN_API", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: [
+          {
+            event_name: "PageView", // 👈 evento apenas de visualização
+            event_time: Math.floor(Date.now() / 1000),
+            action_source: "website",
+            user_data: {
+              em: hashedEmail,
+              ph: hashedPhone,
+              client_ip_address: "{{auto}}",
+              client_user_agent: navigator.userAgent,
+              fbp: fbp,
+              fbc: fbc
+            }
+          }
+        ]
+      })
+    });
+  }
+
+  async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text.trim().toLowerCase());
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+  }
+
+  // Executa quando a página da oferta carrega
+  sendPageViewEvent();
 </script>
 
-<noscript>
-<img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=773719858512638&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Meta Pixel Code -->
 </body>
 </html>
+
 
 
 
