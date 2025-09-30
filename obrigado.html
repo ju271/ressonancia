@@ -32,7 +32,7 @@
   s.parentNode.insertBefore(t,s)}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
 
-  fbq('init', '773719858512638'); // USE O MESMO ID EM TODO LUGAR
+  fbq('init', '1470121757591522'); // USE O MESMO ID EM TODO LUGAR
   fbq('track', 'Purchase', {
     value: 67.90,
     currency: 'BRL'
@@ -41,7 +41,7 @@
 
 <noscript>
   <img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=773719858512638&ev=Purchase&cd[value]=19.90&cd[currency]=BRL&noscript=1"/>
+  src="https://www.facebook.com/tr?id=773719858512638&ev=Purchase&cd[value]=67.90&cd[currency]=BRL&noscript=1"/>
 </noscript>
 <!-- End Meta Pixel Code -->
 
@@ -99,7 +99,7 @@
       ]
     };
 
-    fetch("https://graph.facebook.com/v17.0/SEU_PIXEL_ID/events?access_token=SEU_TOKEN_API", {
+    fetch("https://graph.facebook.com/v17.0/1470121757591522/events?access_token=EAAOgq8ZBWvCoBPmENBM2sYgLLWJq2ehIewya7AoeYV6TjAOKLuicC7Pqo4TlZCAtE738kBgvU0b7pmPDgn2ZCaXY0ZAGZCyDp9jWQ7ASxfOwWXVKrbRHpGDeHrA3ZA4Ws8ZCWgpcCMhXgeBXZC22tmNCWp456Dq3MCrF1V9qWGUNcSqj4bYTW3SJRbxFQnsoASbpyQZDZD", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
